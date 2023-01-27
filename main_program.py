@@ -13,32 +13,24 @@ As my current expertise has not been particularly in the field of web scraping, 
 
 gst_rates = pd.read_csv("gst_rates.csv")
 products = pd.read_csv("products.csv")
-# print(gst_rates)
 
-rates_dic = {row[1]['Category']:row[1]['Rate'] for row in gst_rates.iterrows()}
-# print(rates_dic)
-# for row in gst_rates.iterrows():
-    # print(row[1]['Category'])
-def get_gst_rate(category,price):
-    return rates_dic[category]*price/100    
-
-l = []
-for i in products.iterrows():
-    l.append(get_gst_rate(i[1]['Category'],i[1]['Price']))
-#Dataframe has the processed data that contains the GST rate 
-products['GST_rate'] = l
-
+merged_df = pd.merge(products,gst_rates,on="Category")
+products['GST_amount'] = merged_df['Price']*merged_df['Rate']/100
 
 
 ### Data Analysis
 
 #average of gst_rates across categories
-print(products.groupby("Category")["GST_rate"].mean())
+print("--------")
+print("Average")
+print(products.groupby("Category")["GST_amount"].mean())
 
 
 #max gst rate in each category
-print(products.groupby("Category")["GST_rate"].max())
-
+print("--------")
+print("Maximum GST amount")
+print(products.groupby("Category")["GST_amount"].max())
+print("--------")
 
 
 
